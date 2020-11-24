@@ -1,0 +1,89 @@
+<script runat="server">
+    // Create Handlebars Context
+    let context = {};
+    
+    // Add some variables
+    context.variableOne = "Variable One";
+    context.hello = "Hello " + script.getUserName() + "!";
+    context.secure = "<strong>This should not be bold</strong>";
+    context.unsecure = "<strong>This should be bold!</strong>";
+
+    // Array of numbers
+    context.arrayNumbers = [1,2,3,4,5,6,7,9,10];
+    context.arrayObjects = [
+        {
+            name: "Ben",
+            city: "Sydney"
+        },
+        {
+            name: "Brad",
+            city: "Perth"
+        }
+    ];
+
+    // Statement
+    context.ifFalse = false;
+    context.isTrue = true;
+
+    // Apply context to the template
+    template.context(context);
+</script>
+
+<div class="container">
+    <h1>MODLR Handlebars Example</h1>
+    <hr />
+    <h2>Variables</h2>
+    <hr />
+    <code>variableOne:</code> {{ variableOne }}<br />
+    <code>hello:</code> {{ hello }}<br /><br/>
+
+    <p>The variable below <strong>will not</strong> format HTML Elements</p>
+    <code>secure:</code> {{ secure }}<br /><br />
+
+    <p>The variable below <strong>will</strong> format HTML Elements</p>
+    <code>unsecure:</code> {{{ unsecure }}}<br /><br />
+    
+
+    <hr />
+    <h2>Loops</h2>
+    <hr />
+
+    <p>Loop through array of numbers</p>
+    <code>arrayNumbers:</code><br />
+    {{#each arrayNumbers}}
+        {{this}}
+    {{/each}}
+    <br />
+    <br />
+
+    <p>Loop through array of objects</p>
+    <code>arrayObjects:</code><br />
+    {{#each arrayObjects}}
+        {{ name }}, {{ city }}<br />
+    {{/each}}
+    <hr />
+    <h2>Statements</h2>
+    <hr />
+
+    <p>If variable is true</p>
+    <code>isTrue:</code> 
+    {{#if isTrue}}
+        is true
+    {{else}}
+        is false
+    {{/if}}
+    <br /><br />
+    <p>If variable is false</p>
+    <code>ifFalse:</code> 
+    {{#if ifFalse}}
+        is true
+    {{else}}
+        is false
+    {{/if}}
+</div>
+
+<style>
+    p {
+        margin-bottom: 0;
+    }
+</style>
