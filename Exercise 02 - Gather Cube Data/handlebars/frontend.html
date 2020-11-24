@@ -1,0 +1,17 @@
+<script runat="server">
+    // Create Handlebars Context
+    let context = {};
+
+    let cubeName = "cd67ee46ef478a879beb7692443d5878";  // Can be name
+
+    context.value = cube.get(cubeName, "Budget", "CPI %");
+
+    // Apply context to the template
+    template.context(context);
+</script>
+
+<div class="container">
+    <h1>Gather Cube Data</h1>
+    <hr />
+    Cube Value: {{value}}
+</div>

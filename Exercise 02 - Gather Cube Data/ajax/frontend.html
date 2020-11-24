@@ -1,0 +1,23 @@
+<div class="container">
+    <h1>Gather Cube Data</h1>
+    <hr />
+    Cube Value: <span id="value"></span>
+</div>
+<script>
+    // Name of serverside file
+    var serversidePage = "serverside.js";
+
+    // Handle response from request
+    var callback = function(response) {
+        if(!response.result) {
+            console.log("Something went wrong.");
+            return;
+        }
+        
+        var value = response.value;
+
+        $("#value").html(value);
+    };
+
+    serverside(serversidePage, {}, callback);
+</script>

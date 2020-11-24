@@ -1,0 +1,50 @@
+<div class="container">
+    <h1>Select users from table</h1>
+    <hr />
+    <table class="table table-borderless table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>City</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <tr>
+                <td colspan="4">Loading...</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Name of serverside file
+    var serversidePage = "serverside.js";
+
+    // Handle response from request
+    var callback = function(response) {
+        if(!response.result) {
+            console.log("Something went wrong.");
+            return;
+        }
+        
+        var users = response.users;
+
+        var html = '';
+
+        for(var i = 0, length = users.length; i < length; i++) {
+            var user = users[i];
+            html += '<tr>';
+            html += '<td>'+user.users_id+'</td>';
+            html += '<td>'+user.users_name+'</td>';
+            html += '<td>'+user.users_city+'</td>';
+            html += '<td>'+user.users_role+'</td>';
+            html += '</tr>';
+        }
+
+        $("#tableBody").html(html);
+    };
+
+    serverside(serversidePage, {}, callback);
+</script>
