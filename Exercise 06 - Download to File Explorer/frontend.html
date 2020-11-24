@@ -1,0 +1,29 @@
+<div class="container">
+    <h1>Download External Excel to Filesystem</h1>
+
+    File: <a target="_blank" href="https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia/sep-2020/640101.xls">https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia/sep-2020/640101.xls</a><br />
+    <button class="btn btn-secondary" id="downloadFile">Download File</button>
+</div>
+
+<script>
+    var serversidePage = 'serverside.js';
+    var url = 'https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia/sep-2020/640101.xls';
+
+    var callback = function(response) {
+        if(!response.result) {
+            console.log("Something went wrong.");
+            return;
+        }
+
+        alert('Downloaded file to file explorer.');
+    };
+
+
+    $(document).on('click', '#downloadFile', function(event) {
+        event.preventDefault();
+
+        serverside(serversidePage, {
+            url: url
+        }, callback);
+    });
+</script>
