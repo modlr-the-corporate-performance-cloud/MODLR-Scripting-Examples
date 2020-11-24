@@ -1,0 +1,40 @@
+<script runat="server">
+    // Create Handlebars Context
+    let datasourceName = "Internal Datastore";
+    let context = {};
+    
+    let sql = "SELECT * FROM users LIMIT 0,10";
+    let users = datasource.select(datasourceName, sql);
+    console.log(users);
+    // context.users = JSON.parse(datasource.select(datasourceName, sql));
+
+    // Apply context to the template
+    template.context(context);
+</script>
+
+<div class="container">
+    <h1>Select users from table</h1>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each users}}
+                <tr>
+                    <td>{{ users_id }}</td>
+                    <td>{{ users_name }}</td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    p {
+        margin-bottom: 0;
+    }
+</style>
