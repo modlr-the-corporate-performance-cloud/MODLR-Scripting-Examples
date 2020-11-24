@@ -1,0 +1,41 @@
+<div class="container">
+    <h1>MODLR Serverside Request</h1>
+    <hr />
+    <form class="form" action="" method="POST" id="form">
+        <div class="form-group">
+            <label>Enter a message:</label>
+            <textarea class="form-control" id="message" name="message" rows="4" required="required"></textarea>
+        </div>
+        <input type="submit" class="btn btn-secondary" value="Send" />
+    </form>
+
+    <hr />
+    <h4>Response:</h4>
+    <hr />
+    <div id="response"></div>
+</div>
+
+<script>
+    // Name of serverside file
+    var serversidePage = "serverside.js";
+
+    // Handle response from request
+    var callback = function(response) {
+        if(!response.result) {
+            console.log("Something went wrong.");
+            return;
+        }
+        
+        var message = response.message;
+
+        $("#response").prepend(message + "<br />");
+    };
+
+    // Handle Form Submit
+    $(document).on('submit', '#form', function(event) {
+        event.preventDefault();
+
+        var message = $("#message").val();
+        serverside(serversidePage, {message: message}, callback);
+    });
+</script>
