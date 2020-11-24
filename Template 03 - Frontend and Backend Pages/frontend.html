@@ -1,0 +1,29 @@
+<div class="container">
+    <h1>MODLR Serverside Request</h1>
+    <hr />
+    <div id="data">Loading...</div>
+</div>
+
+<script>
+    // Name of serverside file
+    var serversidePage = "serverside.js";
+
+    // Handle response from request
+    var callback = function(response) {
+        if(!response.result) {
+            console.log("Something went wrong.");
+            return;
+        }
+
+        var html = '<p><strong>Param One:</strong> ' + response.param1 + '</p>';
+        html += '<p><strong>Param Two:</strong> ' + response.param2 + '</p><br />';
+
+        document.getElementById("data").innerHTML = html;
+    };
+
+    // Send of the initial request with a few parameters
+    serverside(serversidePage, {
+        "param1": "Hello",
+        "param2": "Lorem"
+    }, callback);
+</script>
