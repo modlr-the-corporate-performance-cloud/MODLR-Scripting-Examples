@@ -1,0 +1,256 @@
+<div class="container">
+	<div class="clearfix">
+		<div class="float-left">
+			<h2>Address Book</h2>
+		</div>
+		<div class="float-right">
+			<button class="btn btn-secondary" data-toggle="modal" data-target="#addContactModal">Add Contact</button>
+        </div>
+    </div>
+    <hr />
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th class="text-right">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody id="tableBody">
+            <tr>
+                <td colspan="5">Loading Address Book</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Contact Modal -->
+<div class="modal fade" id="addContactModal" tabindex="-1" aria-labelledby="addContactModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="addContactModalLabel">Add Contact Modal</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <form class="form" action="" method="POST" id="addContactForm">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="form-control name" name="name" required="required" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Role</label>
+                        <input type="text" class="form-control role" name="role" required="required" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" class="form-control email" name="email" required="required" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" class="form-control phone" name="phone" required="required" />
+                    </div>
+
+                    <button type="submit" class="btn btn-secondary">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Contact Modal -->
+<div class="modal fade" id="editContactModal" tabindex="-1" aria-labelledby="editContactModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="editContactModalLabel">Edit Contact Modal</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <form class="form" action="" method="POST" id="editContactForm">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="form-control name" name="name" required="required" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Role</label>
+                        <input type="text" class="form-control role" name="role" required="required" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" class="form-control email" name="email" required="required" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" class="form-control phone" name="phone" required="required" />
+                    </div>
+
+                    <button type="submit" class="btn btn-secondary">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Serverside page
+	var serversidePage = "serverside.js";
+    // Temp variable to remember who we are editing 
+    var editContactId = null;
+    // Refresh
+    function refresh() {
+        serverside(serversidePage, {
+            "action": "load"
+        }, render);
+    }
+
+    // Render Function
+    function render(response) {
+        if(!response.result) {
+            console.error("Something went wrong!");
+            return;
+        }
+
+        if(response.address_book.length == 0) {
+            $("#tableBody").html('<tr><td colspan="5">No contacts found.</td></tr>');
+            return;
+        }
+
+        // Otherwise we got some contacts, lets display!
+        var contacts = response.address_book;
+
+        var html = '';
+        // Loop through contacts and set them up as table rows
+        for(var i = 0, length = contacts.length; i < length; i++) {
+            var contact = contacts[i];
+            html += '<tr>';
+            html += '<td>' + contact.address_book_name + '</td>';
+            html += '<td>' + contact.address_book_role + '</td>';
+            html += '<td>' + contact.address_book_email + '</td>';
+            html += '<td>' + contact.address_book_number + '</td>';
+            html += '<td class="text-right">';
+            html += '<button class="btn btn-info btn-xs editContact" data-id="'+contact.address_book_id+'">Edit</button> &nbsp; ';
+            html += '<button class="btn btn-danger btn-xs deleteContact" data-id="'+contact.address_book_id+'">Delete</button>';
+            html += '</td>';
+            html += '</tr>';
+        }
+
+        $("#tableBody").html(html);
+    }
+
+    // editContactModal
+    function editContactModal(response) {
+        if(!response.result) {
+            console.error("Something went wrong!");
+            return;
+        }
+
+        var contact = response.contact;
+        // Lets set the fields
+        $("#editContactModal .name").val(contact.address_book_name);
+        $("#editContactModal .role").val(contact.address_book_role);
+        $("#editContactModal .phone").val(contact.address_book_number);
+        $("#editContactModal .email").val(contact.address_book_email);
+
+        $("#editContactModal").modal("show");
+    }
+
+    // Event Handlers
+
+    // Handle Create Form Event
+    $(document).on('submit', '#addContactForm', function(event) {
+        event.preventDefault();
+
+        // Create payload object
+        var payload = {};
+        payload.action = "add";
+        // `this` refers to #addContactForm
+        // So we're only looking for the classes 
+        // within #addContactForm
+        payload.name = $(this).find(".name").val();
+        payload.role = $(this).find(".role").val();
+        payload.email = $(this).find(".email").val();
+        payload.phone = $(this).find(".phone").val();
+        
+        // Send of the payload to the server
+        serverside(serversidePage, payload, refresh);
+
+        // Hide the modal
+        $("#addContactModal").modal('hide');
+    });
+
+    // Handle Click of delete Event
+    $(document).on('click', '.deleteContact', function(event) {
+        event.preventDefault();
+
+        // Get the unqiue ID for that specific button
+        var id = $(this).data('id');
+
+        // Create payload object
+        var payload = {};
+        payload.action = "delete";
+        payload.id = id;
+        // Pass it to the server to delete
+        serverside(serversidePage, payload, refresh);
+    });
+
+    // Handle submit of edit form
+    $(document).on('submit', '#editContactForm', function(event) {
+        event.preventDefault();
+
+        // Create payload object
+        var payload = {};
+        payload.action = "edit";
+        payload.id = editContactId;
+        // `this` refers to #editContactForm
+        // So we're only looking for the classes 
+        // within #editContactForm
+        payload.name = $(this).find(".name").val();
+        payload.role = $(this).find(".role").val();
+        payload.email = $(this).find(".email").val();
+        payload.phone = $(this).find(".phone").val();
+
+        // Send off the payload
+        serverside(serversidePage, payload, refresh);
+
+        // Hide modal
+        $("#editContactModal").modal('hide');
+    });
+
+    // Handle Click of edit Event
+    $(document).on('click', '.editContact', function(event) {
+        event.preventDefault();
+
+        // Temp store the ID so we know later what we're editing
+        editContactId = $(this).data('id');
+
+        var payload = {};
+        payload.action = "get";
+        payload.id = editContactId;
+        serverside(serversidePage, payload, editContactModal);
+
+    });
+
+    // Render Page
+    refresh();
+</script>
+
+<!-- Just some styles to stop the contact being stuck at the top :) -->
+<style>
+    body {
+        margin: 30px 0 0 0;
+    }
+</style>
